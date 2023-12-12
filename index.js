@@ -10,7 +10,7 @@ function previewBox(previewType) {
     const imageInput = document.getElementById('inputValue_top');
     const selectedImage = imageInput.files[0];
 
-    let previewContent = preview.innerHTML;
+    // let previewContent = preview.innerHTML;
     
     if (previewType === "preview1") {
         if (selectedImage) {
