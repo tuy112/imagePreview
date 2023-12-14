@@ -2,7 +2,7 @@
 .lxTest {
     border: 1px solid #333;
     padding: 20px;
-    width: 400px;
+    width: 500px;
 }
 
 
@@ -10,8 +10,8 @@
 .preview {
     border: 1px solid #333;
     padding: 20px;
-    width: 300px;
-    height: 300px;
+    width: 400px;
+    height: 400px;
     margin-top: 30px;
 }
 img {
@@ -19,3 +19,20 @@ img {
     width: 300px;
     height: 300px;
 }
+
+.topContainer {
+    position: absolute;
+    border: 1px solid #333;
+    padding: 20px;
+    z-index: 1;
+}
+.bottomContainer {
+    position: absolute;
+    left:150px;
+    top:200px;
+    border: 1px solid #333;
+    padding: 20px;
+    z-index: 9999999;
+}
+
+/* 저장 기능 */
