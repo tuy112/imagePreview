@@ -1,31 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>미리보기 예제</title>
-    <link rel="stylesheet" href="./style.css">
+<meta charset="UTF-8">
+<title>영상타일링 레이어 관리</title>
+<style>
+/* form */
+.lxTest {
+    border: 1px solid #333;
+    padding: 20px;
+    width: 700px;
+}
+
+/* 모달창 */
+#modalWrap {
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%; 
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  display:none;
+}
+#modalBody {
+  width: 500px;
+  height: 300px;
+  padding: 30px 30px;
+  margin: 0 auto;
+  border: 1px solid #777;
+  background-color: #fff;
+}
+//닫기 버튼
+#closeBtn {
+  float:right;
+  font-weight: bold;
+  color: #777;
+  font-size:25px;
+  cursor: pointer;
+}
+
+
+/* 미리보기 */
+.preview {
+    border: 1px solid #333;
+    padding: 20px;
+    margin-top: 30px;
+}
+.img1 {
+    width: 600px;
+    height: 600px;
+}
+.img2 {
+    width: 250px; 
+    height: 250px;
+}
+
+.topContainer {
+    position: absolute;
+    border: 1px solid #333;
+    /* padding: 20px; */
+    z-index: 1;
+}
+.bottomContainer {
+    position: absolute;
+    left:200px;
+    top:400px;
+    z-index: 9999999;
+}
+
+/* 저장 기능 */
+.btn {
+    background: none;
+    border-radius: 10px;
+    transition: 0.3s;
+    margin-top: 5px;
+    cursor: pointer;
+    border:1px solid #333;
+    color:#333;
+}
+.btn:hover {
+    background: #333;
+    color: #fff;
+}
+</style>
+
 </head>
 <body>
-    
+	<form modelAttribute="MvpMapVO" method="post"></form>
+	
+	<div class="breadCrumb">
+	    <ul>
+	        <li>홈</li>
+	        <li>지도관리</li>
+	        <li>영상타일링 레이어 관리</li>
+	    </ul>
+	</div>
+	<!-- //breadCrumb -->
+	<h2 class="tit">영상타일링 레이어 관리</h2>
+	
+	<!-- 미리보기 값 입력 : myWebMap-view.jsp에서 가져옴 -->
+	<div class="table">
+		<table>
+			<caption>미리보기 값 입력</caption>
+			<colgroup>
+				<col style="width: 200px">
+				<col style="width: auto;">
+				<col style="width: 100;">
+			</colgroup>
+			<tbody>
+				<tr>
+					<th scope="row">배경지도</th>
+					<td id="bcrnMapNmVal"></td>
+					<input type="hidden" id="bcrnMapIdVal"/>
+					<td> 
+						<button type="button" id="mapBaseModiBtn" class="btn blue lg">
+							<span>클릭</span>
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row">영상지도</th>
+					<td id="bcrnMapNmVal"></td>
+					<input type="hidden" id="bcrnMapIdVal"/>
+					<td> 
+						<button type="button" id="layerModiBtn" class="btn blue lg">
+							<span>클릭</span>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<!-- 팝업창 -->
+	<div id="divViewPop"></div>
 
-    <form class="lxTest">
-        <!-- 미리보기 값 입력 -->
-        <label for="map">배경지도 이미지를 선택하세요:
-        <input type="file" id="inputValue_top" placeholder="값 입력">
-        <button type="button" onclick="previewBox('preview1')">미리보기 1</button><br/>
-    
-        <label for="map">영상지도 이미지를 선택하세요:
-        <input type="file" id="inputValue_bottom" placeholder="값 입력">
-        <button type="button" onclick="previewBox('preview2')">미리보기 2</button>
-    
-        <!-- 미리보기 출력 -->
-        <div class="preview" id="preview"></div>
-    
-        <!-- 저장 -->
-        <button class="saveBtn" id="saveBtn" onclick="save();">저장</button>
-    </form>
+    <!-- 미리보기 출력 -->
+    <div class="preview" id="map">
+	   	<div class="mainBox">
+	       <div class="mapBox">
+	        	<%@ include file="/WEB-INF/jsp/olap/common/map.jsp" %>
+	        	<div class="exampleObject"></div>
+	      	</div> 
+	      </div>
+    </div>
+   	
+    <!-- 저장 -->
+    <button class="btn" id="saveBtn" onclick="save();">저장</button>
+	
+		 
+	
+	 
+	
+	<!-- script part -->
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script>
+	// 1. 배경지도 가져오기 
+	// 1-1. 배경지도 가져오기
+	// include file map.jsp
+	
+	// 1-2. 배경지도 모달창 띄우기
+	//배경지도 선택
+	debugger;
+	$(document).on('click', "#mapBaseModiBtn", function() {
+		$.ajax({
+			data : {},
+			url : "<c:url value='/mvpMap/baseMapListView.do'/>",
+			dataType : 'html', 
+			type : 'post',
+			success : function(html) {
+				$('#divViewPop').html(html);
 
-    <script src="./index.js"></script>
+				//프로그램 등록화면 드래그 기능 & 텍스트 클릭 기능
+				$(document).ready(function() {
+					$('.popup').draggable({
+					      cancel:'.cont',
+					      containment: "window"
+					  });
+				});
+				
+				//팝업 CSS 이벤트 추가
+				$('.btnPopClose').on({
+					"click" : function() {
+						$(this).closest('.popup').hide();
+						$('#dimmed').remove();
+					}
+				});
+
+			},
+			error : function(request, status, error) {
+				//에러
+			}
+		})
+	});
+
+
+	// 2. 영상지도 가져오기 (지오서버 레이어 - SHP 형태로 가져와야함)
+	// 2-1. 영상지도 레이어 가져오기
+	$(document).on('click', "#layerModiBtn", function() {
+		$.ajax({
+			data : {},
+			url : "<c:url value='/mvpMap/overlapDroneList.do'/>",
+			dataType : 'html', 
+			type : 'post',
+			success : function(html) {
+				$('#divViewPop').html(html);
+
+				//프로그램 등록화면 드래그 기능 & 텍스트 클릭 기능
+				$(document).ready(function() {
+					$('.popup').draggable({
+					      cancel:'.cont',
+					      containment: "window"
+					  });
+				});
+				
+				//팝업 CSS 이벤트 추가
+				$('.btnPopClose').on({
+					"click" : function() {
+						$(this).closest('.popup').hide();
+						$('#dimmed').remove();
+					}
+				});
+
+			},
+			error : function(request, status, error) {
+				//에러
+			}
+		})
+	});
+	
+	// 2-2. 영상지도 모달창 띄우기
+	
+	
+	
+
+
+	// 3. 미리보기 로직
+	
+
+	// 4. 저장 기능 로직
+	function save() {
+	    $.ajax({
+	    	url:"",
+	        type:"POST",
+	        data:data,
+	        success: function(data) {
+	            console.log(data);
+	            alert("미리보기 저장 성공");
+	        }
+	    })
+	}
+	// 미리보기 데이터가 저장되는 테이블 만들기! 
+
+
+	// '미리보기 저장 데이터'를 웹맵에서 그대로 get할 수 있어야함
+	</script>
 </body>
 </html>

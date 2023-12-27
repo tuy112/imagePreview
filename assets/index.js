@@ -1,7 +1,7 @@
-// 배경지도 가져오기 (지오서버에서 SHP 형태로 가져와야함)
+// 배경지도 가져오기 (지오서버에서 )
 
 
-// 영상지도 가져오기
+// 영상지도 가져오기 (SHP 형태로 가져와야함)
 
 
 
@@ -42,32 +42,15 @@ function previewBox(previewType) {
 
 // 저장 기능 로직
 function save() {
-    // 서버에 데이터 전송
-    const inputValueTop = document.getElementById('inputValue_top').value;
-    const inputValueBottom = document.getElementById('inputValue_bottom').value;
-
-    // AJAX를 사용하여 서버로 데이터 전송
-    const xhr = new XMLHttpRequest();
-    const url = 'http://localhost:3000/savePreview';
-
-    xhr.open('POST', url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4) {
-            if (xhr.status == 200) {
-                const result = JSON.parse(xhr.responseText);
-                console.log(result.message);
-            } else {
-                console.error('Error:', xhr.statusText);
-            }
+    $.ajax({
+        type:"POST",
+        url:"",
+        data:data,
+        success: function(data) {
+            console.log(data);
+            alert("미리보기 저장 성공");
         }
-    };
-
-    const data = {
-        previewType: 'preview1',
-        content: inputValueTop
-    };
-
-    xhr.send(JSON.stringify(data));
+    })
 }
+
+// '미리보기 저장 데이터'를 웹맵에서 그대로 get할 수 있어야함
